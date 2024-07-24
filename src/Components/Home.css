@@ -1,0 +1,91 @@
+@media(max-width: 900px) {
+    .image-right {
+        display: none;
+    }   
+}
+
+.image-right img {
+    width: 40vw;
+    height: 60vh;
+    border-radius: 8px;
+    transition: transform 0.3s ease; /* Smooth transition for transform */
+}
+
+.image-right img:hover {
+    transform: scale(1.25);
+    filter: brightness(50%); /* Full brightness on hover */
+}
+
+.image-right video {
+    width: 40vw;
+    height: 60vh;
+    border-radius: 10px;
+    transition: transform 0.3s ease; 
+}
+
+.image-right video:hover {
+    transform: scale(0.9);
+    filter: brightness(50%); 
+}
+
+
+
+form input[type='text']:nth-child(1) {
+    margin-top: 40px;
+    /* color: red; */
+}
+form input
+{
+    font-size: 15px;;
+}
+.center > h2 {
+    align-items: center;
+    font-size: 3.5rem;
+    border-bottom: solid 2px black;
+}
+
+/* Styling for the Ant Design Rate component */
+.ant-rate {
+    /* margin-top: 10px; */
+    margin-bottom: 10px;
+    /* Add your custom styles here */
+}
+
+.ant-rate-star {
+    font-size: 3rem; /* Adjust star size if needed */
+}
+.Dropdown{
+   color: black;
+}
+/* Ensure the "Poppins" font is imported */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+/* Apply the "Poppins" font to the entire page */
+body {
+  font-family: "Poppins", sans-serif;
+}
+
+/* Customize the Dropdown component */
+.ant-dropdown {
+  font-family: "Poppins", sans-serif; /* Apply font to dropdown */
+}
+
+.ant-dropdown-menu-item {
+  font-family: "Poppins", sans-serif; /* Apply font to dropdown items */
+}
+
+.ant-dropdown-menu-item-selected {
+  font-family: "Poppins", sans-serif; /* Apply font to selected dropdown item */
+}
+
+.ant-select {
+    font-family: "Poppins", sans-serif; /* Apply font to select */
+  }
+  
+  .ant-select-selection-item {
+    font-family: "Poppins", sans-serif; /* Apply font to selected item */
+  }
+  
+  .ant-select-item-option {
+    font-family: "Poppins", sans-serif; /* Apply font to select options */
+  }
