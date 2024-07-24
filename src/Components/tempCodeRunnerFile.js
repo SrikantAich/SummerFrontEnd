@@ -1,28 +1,21 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { DownOutlined } from '@ant-design/icons';
-import { Dropdown, Space, Typography, Modal, message, Rate, Select } from 'antd';
+import { HomeOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { Modal, Rate, Select, FloatButton } from 'antd';
 import { FrownOutlined, MehOutlined, SmileOutlined } from '@ant-design/icons';
-import Image from "../assets/Image.png";
-import ImageVid from "../assets/ImageVid.mp4";
-import "./Home.css";
+import './Home.css';
 
-// Ant Design Dropdown items
-const items = [
-  {
-    key: '1',
-    label: 'Speciality 1',
-  },
-  {
-    key: '2',
-    label: 'Speciality 2',
-  },
-  {
-    key: '3',
-    label: 'Speciality 3',
-  },
+// Ant Design Dropdown items for Specialities
+const specialityItems = [
+  { key: 'Cardiology', label: 'Cardiology' },
+  { key: 'Anesthesiology', label: 'Anesthesiology' },
+  { key: 'Emergency medicine', label: 'Emergency medicine' },
+  { key: 'Gastroenterology', label: 'Gastroenterology' },
+  { key: 'Pediatrics', label: 'Pediatrics' },
+  { key: 'Dermatology', label: 'Dermatology' },
 ];
 
+// Custom Icons for Rating
 const customIcons = {
   1: <FrownOutlined />,
   2: <FrownOutlined />,
@@ -40,7 +33,7 @@ const generateOptions = (max) => {
   ));
 };
 
-const AddHospital = () => {
+const EditHospital = () => {
   const [formData, setFormData] = useState({
     name: '',
     city: '',
@@ -48,38 +41,94 @@ const AddHospital = () => {
     specialities: [],
     rating: 0,
     description: '',
-    numberOfDoctors: 1,
-    numberOfDepartments: 1
+    id:'',
+    extraImageUrl: '',
+    numberOfDoctors: 'Number of Doctors',
+    numberOfDepartments: 'Number of Departments'
   });
-  const [imageUrl, setImageUrl] = useState('');
-  const [imageError, setImageError] = useState(false); // State to handle image load error
+  const [checkboxChecked, setCheckboxChecked] = useState(false); // New state for checkbox
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Update the imageUrl state whenever formData.imageUrl changes
-    setImageUrl(formData.imageUrl);
-  }, [formData.imageUrl]);
+  const handleLogin = async () => {
+    // Convert numberOfDoctors and numberOfDepartments to numbers if they are not default values
+    const numberOfDoctors = formData.numberOfDoctors === 'Number of Doctors' ? undefined : Number(formData.numberOfDoctors);
+    const numberOfDepartments = formData.numberOfDepartments === 'Number of Departments' ? undefined : Number(formData.numberOfDepartments);
 
-  const handleLogin = () => {
-    // Use Ant Design components for feedback
-    Modal.success({
-      title: 'Submission Successful',
-      content: 'The hospital details have been submitted.',
-      onOk() {
-        // Clear form data
-        setFormData({
-          name: '',
-          city: '',
-          imageUrl: '',
-          specialities: [],
-          rating: 0,
-          description: '',
-          numberOfDoctors: 1,
-          numberOfDepartments: 1
+    const isFormValid = formData.id && (
+      formData.city || 
+      formData.imageUrl || 
+      formData.specialities.length > 0 || 
+      formData.rating || 
+      formData.description || 
+      formData.extraImageUrl || 
+      numberOfDoctors !== undefined || 
+      numberOfDepartments !== undefined
+    );
+
+    if (!formData.id || !checkboxChecked || !isFormValid) {
+      Modal.error({
+        title: 'Submission Unsuccessful',
+        content: (
+          <>
+            <p>Fill in all the required details and check the declaration box.</p>
+            <p>At least one other field besides Hospital ID must be filled.</p>
+          </>
+        )
+      });
+    } else {
+      try {
+        const response = await fetch('http://localhost:3000/api/v1/edithospital', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...formData
+          }),
         });
-        setImageError(false); // Reset image error state
-        navigate('/addhospital');
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'An error occurred');
+        }
+
+        const data = await response.json();
+        console.log(data); // Inspect the response from the server
+
+        Modal.success({
+          title: 'Submission Successful',
+          content: 'The hospital details have been submitted.',
+          onOk() {
+            setFormData({
+              name: '',
+              city: '',
+              id:'',
+              imageUrl: '',
+              specialities: [],
+              rating: 0,
+              description: '',
+              extraImageUrl: '',
+              numberOfDoctors: 'Number of Doctors',
+              numberOfDepartments: 'Number of Departments'
+            });
+            setCheckboxChecked(false);
+            navigate('/edithospital');
+          }
+        });
+      } catch (error) {
+        console.error('Error submitting form:', error.message);
+        Modal.error({
+          title: 'Submission Failed',
+          content: `An error occurred: ${error.message}. Please try again.`
+        });
       }
+    }
+  };
+
+  const handleSelectChange = (value, name) => {
+    setFormData({
+      ...formData,
+      [name]: value
     });
   };
 
@@ -87,28 +136,19 @@ const AddHospital = () => {
     const { name, value, type, checked } = e.target;
     
     if (type === 'checkbox') {
-      setFormData({
-        ...formData,
-        [name]: checked
-      });
+      setCheckboxChecked(checked); // Update checkbox state
     } else {
       setFormData({
         ...formData,
         [name]: value
       });
+      if (name === 'extraImageUrl') {
+        setFormData(prevData => ({
+          ...prevData,
+          imageUrl: value
+        }));
+      }
     }
-  };
-
-  const handleDropdownChange = (e) => {
-    const selectedKeys = e.selectedKeys;
-    setFormData({
-      ...formData,
-      specialities: selectedKeys
-    });
-  };
-
-  const handleImageError = () => {
-    setImageError(true); // Set error state if image fails to load
   };
 
   const handleRatingChange = (value) => {
@@ -118,123 +158,128 @@ const AddHospital = () => {
     });
   };
 
-  const handleSelectChange = (name) => (value) => {
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+  const handleHomeClick = () => {
+    navigate('/addhospital');
+  };
+
+  const handleDeleteClick = () => {
+    navigate('/deletehospital');
+  };
+
+  const handleAddClick = () => {
+    navigate('/addhospital');
   };
 
   return (
-    <div className="login-main">
-      <div className="login-right">
-        <div className="login-right-container">
-          <div className="center">
-            <h2>Please enter Hospital Details</h2>
-            <form>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Name"
-                className="form-input"
-              />
-              <input
-                type="text"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                placeholder="City"
-                className="form-input"
-              />
-              <input
-                type="text"
-                name="imageUrl"
-                value={formData.imageUrl}
-                onChange={handleChange}
-                placeholder="Image URL"
-                className="form-input"
-              />
-              <input
-                type="text"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Description"
-                className="form-input"
-              />
-
-              <Dropdown
-                menu={{
-                  items,
-                  selectable: true,
-                  selectedKeys: formData.specialities,
-                  onSelect: handleDropdownChange,
-                  onDeselect: handleDropdownChange // Handle deselect
-                }}
-              >
-                <Typography.Link>
-                  <Space>
-                    {formData.specialities.length > 0 ? formData.specialities.map(key => items.find(item => item.key === key)?.label).join(', ') : 'Select Specialities'}
-                    <DownOutlined />
-                  </Space>
-                </Typography.Link>
-              </Dropdown>
-              
-              <br /><br />
-              <Rate
-                value={formData.rating}
-                onChange={handleRatingChange}
-                character={({ index }) => customIcons[index + 1]}
-              />
-
-              <div className="form-selectors">
+    <>
+      <div className="login-main">
+        <div className="login-right">
+          <div className="login-right-container">
+            <div className="center">
+              <h2>Edit Hospital Details</h2>
+              <form>
+                <input
+                  type="text"
+                  name="id"
+                  value={formData.id}
+                  onChange={handleChange}
+                  placeholder="Hospital I.D"
+                  className="form-input"
+                />
+                <input
+                  type="text"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  placeholder="City"
+                  className="form-input"
+                />
+                <input
+                  type="text"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  placeholder="Description"
+                  className="form-input"
+                />
+                <input
+                  type="text"
+                  name="extraImageUrl"
+                  value={formData.extraImageUrl}
+                  onChange={handleChange}
+                  placeholder="Image URL"
+                  className="form-input"
+                  style={{ marginBottom: '16px' }}
+                />
                 <Select
+                  name="numberOfDoctors"
                   value={formData.numberOfDoctors}
-                  onChange={handleSelectChange('numberOfDoctors')}
-                  style={{ width: '100%', marginBottom: '8px' }}
+                  onChange={(value) => setFormData({ ...formData, numberOfDoctors: value })}
+                  placeholder="Select Number of Doctors"
+                  style={{ width: '100%', marginBottom: '16px' }}
                 >
-                  {generateOptions(100)}
+                  {generateOptions(10)}
                 </Select>
                 <Select
+                  name="numberOfDepartments"
                   value={formData.numberOfDepartments}
-                  onChange={handleSelectChange('numberOfDepartments')}
-                  style={{ width: '100%' }}
+                  onChange={(value) => setFormData({ ...formData, numberOfDepartments: value })}
+                  placeholder="Select Number of Departments"
+                  style={{ width: '100%', marginBottom: '16px' }}
                 >
-                  {generateOptions(100)}
+                  {generateOptions(10)}
                 </Select>
-              </div>
-
-              <div className="login-center-buttons">
-                <button type="button" onClick={handleLogin}>Submit</button>
-              </div>
-            </form>
+                <Select
+                  mode="multiple"
+                  name="specialities"
+                  value={formData.specialities}
+                  onChange={(value) => handleSelectChange(value, 'specialities')}
+                  placeholder="Select Specialities"
+                  style={{ width: '100%', marginBottom: '16px' }}
+                >
+                  {specialityItems.map(item => (
+                    <Select.Option key={item.key} value={item.key}>
+                      {item.label}
+                    </Select.Option>
+                  ))}
+                </Select>
+                <br /><br />
+                <Rate
+                  value={formData.rating}
+                  onChange={handleRatingChange}
+                  character={({ index }) => customIcons[index + 1]}
+                />
+                <div className="remember-div">
+                  <input
+                    type="checkbox"
+                    id="remember-checkbox"
+                    checked={checkboxChecked} // Bind checkbox state
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="remember-checkbox">
+                    I hereby declare that the information provided is true to the best of my knowledge.
+                  </label>
+                </div>
+                <div className="login-center-buttons">
+                  <button type="button" onClick={handleLogin}>Submit</button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
+        <FloatButton.Group
+          shape="circle"
+          style={{
+            right: 24,
+          }}
+        >
+          <FloatButton icon={<HomeOutlined />} onClick={handleHomeClick} />
+          <FloatButton icon={<DeleteOutlined />} onClick={handleDeleteClick} />
+          <FloatButton icon={<PlusOutlined />} onClick={handleAddClick} />
+        </FloatButton.Group>
       </div>
-
-      <div className="image-right">
-        {imageUrl ? (
-          <img
-            src={imageUrl}
-            alt="Hospital"
-            onError={handleImageError}
-            style={{ maxWidth: '100%', maxHeight: '100%' }}
-          />
-        ) : (
-          <video
-            src={ImageVid}
-            autoPlay
-            loop
-            muted
-            style={{ width: '100%', height: '80%' }}
-          />
-        )}
-        {imageError && <p>Error loading image. Please check the URL.</p>}
-      </div>
-    </div>
+    </>
   );
 };
 
-export default AddHospital;
+export default EditHospital;

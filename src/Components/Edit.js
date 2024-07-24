@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { HomeOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { Modal, Rate, Select, FloatButton } from 'antd';
+import { HomeOutlined, DeleteOutlined, PlusOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { Modal, Rate, Select, FloatButton, Tooltip } from 'antd';
 import { FrownOutlined, MehOutlined, SmileOutlined } from '@ant-design/icons';
 import './Home.css';
 
@@ -41,7 +41,7 @@ const EditHospital = () => {
     specialities: [],
     rating: 0,
     description: '',
-    id:'',
+    id: '',
     extraImageUrl: '',
     numberOfDoctors: 'Number of Doctors',
     numberOfDepartments: 'Number of Departments'
@@ -49,33 +49,81 @@ const EditHospital = () => {
   const [checkboxChecked, setCheckboxChecked] = useState(false); // New state for checkbox
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    if (!formData.id || !checkboxChecked) {
+  const handleLogin = async () => {
+    // Validate required fields
+    if (!formData.id || !formData.name || !formData.description || !checkboxChecked) {
       Modal.error({
         title: 'Submission Unsuccessful',
-        content: 'Fill in all the details and check the declaration box.'
+        content: (
+          <>
+            <p>Fill in all the required details and check the declaration box.</p>
+            <p>Required fields: Hospital ID, Name, and Description.</p>
+          </>
+        )
       });
-    } else {
+      return;
+    }
+
+    // Create the request body
+    const requestBody = {
+      id: formData.id,
+      name: formData.name,
+      city: formData.city,
+      imageUrl: formData.imageUrl,
+      specialities: formData.specialities,
+      rating: formData.rating,
+      description: formData.description,
+    };
+
+    if (formData.numberOfDoctors !== 'Number of Doctors') {
+      requestBody.numberOfDoctors = Number(formData.numberOfDoctors);
+    }
+
+    if (formData.numberOfDepartments !== 'Number of Departments') {
+      requestBody.numberOfDepartments = Number(formData.numberOfDepartments);
+    }
+
+    try {
+      const response = await fetch('https://summerbackend-ntn7.onrender.com/api/v1/edithospital', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'An error occurred');
+      }
+
+      const data = await response.json();
+      console.log(data); // Inspect the response from the server
+
       Modal.success({
         title: 'Submission Successful',
         content: 'The hospital details have been submitted.',
         onOk() {
-          console.log(formData);
           setFormData({
             name: '',
             city: '',
-            id:'',
+            id: '',
             imageUrl: '',
             specialities: [],
             rating: 0,
             description: '',
-            extraImageUrl: '',
             numberOfDoctors: 'Number of Doctors',
             numberOfDepartments: 'Number of Departments'
           });
-          setCheckboxChecked(false); // Reset checkbox state
+          setCheckboxChecked(false);
           navigate('/edithospital');
         }
+      });
+    } catch (error) {
+      console.error('Error submitting form:', error.message);
+      Modal.error({
+        title: 'Submission Failed',
+        content: `An error occurred: ${error.message}. Please try again.`
       });
     }
   };
@@ -114,7 +162,7 @@ const EditHospital = () => {
   };
 
   const handleHomeClick = () => {
-    navigate('/main');
+    navigate('/addhospital');
   };
 
   const handleDeleteClick = () => {
@@ -133,12 +181,25 @@ const EditHospital = () => {
             <div className="center">
               <h2>Edit Hospital Details</h2>
               <form>
+                <div className="form-input-with-info">
+                  <input
+                    type="text"
+                    name="id"
+                    value={formData.id}
+                    onChange={handleChange}
+                    placeholder="Hospital I.D"
+                    className="form-input"
+                  />
+                  <Tooltip title="Hospital ID is available on the home page.">
+                    <InfoCircleOutlined className="info-icon" style={{ fontSize: '24px' }}/>
+                  </Tooltip>
+                </div>
                 <input
                   type="text"
-                  name="id"
-                  value={formData.id}
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
-                  placeholder="Hospital I.D"
+                  placeholder="Hospital Name"
                   className="form-input"
                 />
                 <input
@@ -157,15 +218,7 @@ const EditHospital = () => {
                   placeholder="Description"
                   className="form-input"
                 />
-                <input
-                  type="text"
-                  name="extraImageUrl"
-                  value={formData.extraImageUrl}
-                  onChange={handleChange}
-                  placeholder="Image URL"
-                  className="form-input"
-                  style={{ marginBottom: '16px' }}
-                />
+            
                 <Select
                   name="numberOfDoctors"
                   value={formData.numberOfDoctors}

@@ -70,7 +70,7 @@ const AddHospital = () => {
           numberOfDepartments
         };
 
-        const response = await fetch('https://summerbackend-zfb7.onrender.com/api/v1/hospitals/create', {
+        const response = await fetch('https://summerbackend-ntn7.onrender.com/api/v1/addhospital', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
