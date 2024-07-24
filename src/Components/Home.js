@@ -5,6 +5,7 @@ import { Modal, Rate, Select, FloatButton } from 'antd';
 import { FrownOutlined, MehOutlined, SmileOutlined } from '@ant-design/icons';
 import ImageVid from "../assets/ImageVid.mp4";
 import './Home.css';
+import Navbar from "./Navbar";
 
 // Ant Design Dropdown items for Specialities
 const specialityItems = [

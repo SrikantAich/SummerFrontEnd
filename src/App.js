@@ -6,7 +6,8 @@ import NoPage from './Components/NoPage'; // Uncomment if you want to use this
 import Main from './Components/Main';
 import Delete from './Components/Delete';
 import Edit from './Components/Edit';
-import Navbar from './Components/Navbar';
+
+import HospitalDetails from './Components/HospitalDetail';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/addhospital" element={<AddHospital />} />
         <Route path="/deletehospital" element={<Delete />} />
         <Route path="/edithospital" element={<Edit />} />
+        <Route path="/hospital/:id" element={<HospitalDetails />} />
         <Route path="*" element={<NoPage />} /> {/* Uncomment if you have a NoPage component */}
       </Routes>
     </Router>

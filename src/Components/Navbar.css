@@ -1,0 +1,22 @@
+.navbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  /* background-color: #f0f2f5; */
+}
+
+.navbar-heading {
+  display: flex;
+  align-items: center;
+}
+
+.hospital-icon {
+  width: 40px; /* Adjust the size as needed */
+  height: 40px;
+}
+
+.navbar-menu {
+  flex-grow: 1;
+  justify-content: flex-end;
+}

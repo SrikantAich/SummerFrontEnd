@@ -1,0 +1,78 @@
+.hospital-details-container {
+    display: flex;                /* Enable flexbox */
+    align-items: center;          /* Vertically center items */
+    justify-content: center;      /* Horizontally center items */
+    height: 100vh;                /* Full viewport height */
+    padding: 20px;
+    text-align: center;
+    box-sizing: border-box;       /* Include padding in element's total width and height */
+  }
+  
+  .hospital-details {
+    display: flex;
+    align-items: center;          /* Vertically center items */
+    justify-content: flex-start;  /* Align items to the start of the container */
+    gap: 20px;
+    flex-direction: row;          /* Ensure image is on the left and text on the right */
+    flex-wrap: wrap;              /* Allow wrapping on smaller screens */
+  }
+  
+  .hospital-image {
+    flex: 1;                      /* Allow image to take up available space */
+    max-width: 50vw;              /* Responsive width */
+    max-height: 50vh;             /* Responsive height */
+    object-fit: cover;            /* Maintain aspect ratio while covering the container */
+    border-radius: 8px;
+  }
+  
+  .hospital-info {
+    flex: 1;                      /* Allow text to take up available space */
+    text-align: left;
+    max-width: 600px;             /* Limit max-width for better readability */
+  }
+  
+  .hospital-info h1 {
+    font-size: 3rem;              /* Increase font size */
+    margin-bottom: 20px;
+  }
+  
+  .hospital-info p {
+    font-size: 1.5rem;            /* Increase font size */
+    margin-bottom: 10px;
+  }
+  
+  /* Media Queries for responsiveness */
+  @media (max-width: 768px) {
+    .hospital-details {
+      flex-direction: column;     /* Stack image and text vertically on smaller screens */
+      text-align: center;         /* Center align text on smaller screens */
+    }
+    
+    .hospital-image {
+      max-width: 80vw;           /* Adjusted for smaller screens */
+      max-height: 40vh;          /* Adjusted for smaller screens */
+    }
+    
+    .hospital-info {
+      max-width: 100%;           /* Adjusted for smaller screens */
+    }
+    
+    .hospital-info h1 {
+      font-size: 2rem;           /* Adjust font size for smaller screens */
+    }
+    
+    .hospital-info p {
+      font-size: 1.2rem;         /* Adjust font size for smaller screens */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .hospital-info h1 {
+      font-size: 1.8rem;         /* Further adjust font size for very small screens */
+    }
+    
+    .hospital-info p {
+      font-size: 1rem;           /* Further adjust font size for very small screens */
+    }
+  }
+  

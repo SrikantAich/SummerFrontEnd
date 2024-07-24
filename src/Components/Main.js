@@ -1,42 +1,52 @@
-import React from 'react';
-import { PlusOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { FloatButton } from 'antd';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for routing
+import React, { useState, useEffect } from 'react';
 import 'antd/dist/reset.css'; // Ensure Ant Design styles are imported
 import Navbar from './Navbar';
+import CardContainer from './CardContainer';
+import './Main.css';
+import { Input, Space, Spin } from 'antd'; // Import Input, Space, and Spin from Ant Design
+import { SearchOutlined } from '@ant-design/icons'; // Import SearchOutlined icon
+
+const { Search } = Input;
 
 function Main() {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  // Function to handle Plus button click
-  const handlePlusClick = () => {
-    navigate('/addhospital');
-  };
+  useEffect(() => {
+    // Simulate an API call
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000); // Replace this with your actual API call
+  }, []);
 
-  // Function to handle Delete button click
-  const handleDeleteClick = () => {
-    navigate('/deletehospital');
-  };
-
-  // Function to handle Edit button click
-  const handleEditClick = () => {
-    navigate('/edithospital');
+  // Handle change in the search input field
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
   };
 
   return (
     <div>
-    <Navbar/>
-      <div>Main</div>
-      <FloatButton.Group
-        shape="circle"
-        style={{
-          right: 24,
-        }}
-      >
-        <FloatButton icon={<PlusOutlined />} onClick={handlePlusClick} />
-        <FloatButton icon={<DeleteOutlined />} onClick={handleDeleteClick} />
-        <FloatButton icon={<EditOutlined />} onClick={handleEditClick} />
-      </FloatButton.Group>
+      <Navbar />
+      <div style={{ padding: '20px' }}> {/* Add padding for spacing */}
+        <Space direction="vertical" style={{ width: '100%', display: 'flex', alignItems: 'center', marginTop: 50 }}>
+          <Input
+            placeholder="Enter area to search hospitals"
+            allowClear
+            size="large"
+            value={searchQuery}
+            onChange={handleSearchChange}
+            style={{ width: '75vw' }}
+            prefix={<SearchOutlined />} // Add search icon
+          />
+        </Space>
+      </div>
+      {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '70vh' }}>
+          <Spin size="large" />
+        </div>
+      ) : (
+        <CardContainer searchQuery={searchQuery} />
+      )}
     </div>
   );
 }

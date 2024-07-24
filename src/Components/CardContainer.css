@@ -1,0 +1,8 @@
+.CardContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px; /* Adds space between items */
+    padding: 20px; /* Adds padding inside the container */
+    margin: 100px 0 0 20px; /* Sets margin-top, margin-right, margin-bottom, margin-left */
+}
