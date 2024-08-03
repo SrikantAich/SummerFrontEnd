@@ -6,8 +6,6 @@ import './Main.css';
 import { Input, Space, Spin } from 'antd'; // Import Input, Space, and Spin from Ant Design
 import { SearchOutlined } from '@ant-design/icons'; // Import SearchOutlined icon
 
-const { Search } = Input;
-
 function Main() {
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
