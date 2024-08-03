@@ -59,7 +59,7 @@ const Login = () => {
       {contextHolder}
       <div className="login-main">
         <div className="login-left">
-          <img src={Image} alt="Image Loading" />
+          <img src={Image} alt="Login Illustration" />
         </div>
         <div className="login-right">
           <div className="login-right-container">
@@ -95,14 +95,14 @@ const Login = () => {
                       Remember for 30 days
                     </label>
                   </div>
-                  <a href="#" className="forgot-pass-link">
+                  <a href="/reset-password" className="forgot-pass-link">
                     Forgot password?
                   </a>
                 </div>
                 <div className="login-center-buttons">
                   <button type="button" onClick={handleLogin}>Log In</button>
                   <button type="button">
-                    <img src={GoogleSvg} alt="" />
+                    <img src={GoogleSvg} alt="Google login" />
                     Log In with Google
                   </button>
                 </div>
@@ -110,7 +110,7 @@ const Login = () => {
             </div>
 
             <p className="login-bottom-p">
-              Don't have an account? <a href="#">Sign Up</a>
+              Don't have an account? <a href="/signup">Sign Up</a>
             </p>
           </div>
         </div>
